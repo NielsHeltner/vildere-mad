@@ -28,10 +28,22 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    @OnClick(R.id.profileBtn)
+    public void goToProfile() {
+        Intent profileIntent = new Intent(this, ProfileActivity.class);
+        startActivity(profileIntent);
+    }
+
     @OnClick(R.id.leaderboardBtn)
-    public void leaderboard() {
+    public void goToLeaderboard() {
         Intent leaderboardIntent = new Intent(this, LeaderboardActivity.class);
         startActivity(leaderboardIntent);
+    }
+
+    @OnClick(R.id.mapBtn)
+    public void goToMap() {
+        Intent mapIntent = new Intent(this, MapActivity.class);
+        startActivity(mapIntent);
     }
 
 }
