@@ -13,13 +13,13 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.loggedInAsTxt)
-    private TextView loggedInAsTxt;
+    TextView loggedInAsTxt;
     @BindView(R.id.profileBtn)
-    private Button profileBtn;
+    Button profileBtn;
     @BindView(R.id.leaderboardBtn)
-    private Button leaderboardBtn;
+    Button leaderboardBtn;
     @BindView(R.id.mapBtn)
-    private Button mapBtn;
+    Button mapBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
