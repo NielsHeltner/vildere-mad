@@ -9,6 +9,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import food.wilder.map.MapActivity;
 
 public class MainActivity extends AppCompatActivity {
 
