@@ -1,4 +1,4 @@
-package food.wilder;
+package food.wilder.gui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +9,10 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import food.wilder.map.MapActivity;
+import food.wilder.R;
+import food.wilder.gui.LeaderboardActivity;
+import food.wilder.gui.ProfileActivity;
+import food.wilder.gui.map.MapActivity;
 
 public class MainActivity extends AppCompatActivity {
 

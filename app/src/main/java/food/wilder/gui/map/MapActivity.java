@@ -1,4 +1,4 @@
-package food.wilder.map;
+package food.wilder.gui.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
