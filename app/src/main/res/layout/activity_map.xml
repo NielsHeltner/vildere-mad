@@ -3,6 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="food.wilder.MapActivity">
+    tools:context="food.wilder.gui.MapActivity">
 
 </android.support.constraint.ConstraintLayout>
