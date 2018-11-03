@@ -15,8 +15,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import food.wilder.R;
+import food.wilder.common.DaggerMapComponent;
+import food.wilder.common.ILocationService;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -26,6 +30,9 @@ public class MapActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
+    @Inject
+    ILocationService locationService;
+
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
 
@@ -34,6 +41,10 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         ButterKnife.bind(this);
+
+
+        locationService = DaggerMapComponent.create().locationService();
+        Log.d("fuck", "null? " + (locationService == null));
 
         initLocation();
     }
@@ -75,12 +86,11 @@ public class MapActivity extends AppCompatActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(requestCode == PERMISSION_REQUEST_CODE) { // requestCode used to link permission requests together
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // if the request is cancelled, the result arrays are empty
+        if (requestCode == PERMISSION_REQUEST_CODE) { // requestCode used to link permission requests together
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // if the request is cancelled, the result arrays are empty
                 Log.d(getString(R.string.app_name), "Permission was granted");
                 initLocation();
-            }
-            else {
+            } else {
                 Log.d(getString(R.string.app_name), "Permission was denied");
             }
         }
