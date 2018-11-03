@@ -19,6 +19,12 @@ import butterknife.ButterKnife;
 
 public class MapActivity extends AppCompatActivity {
 
+    public static final int PERMISSION_REQUEST_CODE = 6124;
+    public static final String[] PERMISSION_REQUESTS = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -32,10 +38,13 @@ public class MapActivity extends AppCompatActivity {
 
     private void initLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 6124);
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { // checks if permissions are granted (https://developer.android.com/training/permissions/requesting)
+            Log.d(getString(R.string.app_name), "Requesting permissions");
+            ActivityCompat.requestPermissions(this, PERMISSION_REQUESTS, PERMISSION_REQUEST_CODE);
+            return;
         }
 
+        Log.d(getString(R.string.app_name), "Starting location client");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         LocationRequest locationRequest = new LocationRequest();
@@ -57,6 +66,22 @@ public class MapActivity extends AppCompatActivity {
         };
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+    /**
+     * Invoked when the user responds to the app's permission request
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if(requestCode == PERMISSION_REQUEST_CODE) { // requestCode used to link permission requests together
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // if the request is cancelled, the result arrays are empty
+                Log.d(getString(R.string.app_name), "Permission was granted");
+                initLocation();
+            }
+            else {
+                Log.d(getString(R.string.app_name), "Permission was denied");
+            }
+        }
     }
 
 }
