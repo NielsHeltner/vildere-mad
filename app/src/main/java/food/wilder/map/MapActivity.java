@@ -1,4 +1,4 @@
-package food.wilder;
+package food.wilder.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import butterknife.ButterKnife;
+import food.wilder.R;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -26,6 +27,7 @@ public class MapActivity extends AppCompatActivity {
     };
 
     private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class MapActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        LocationCallback locationCallback = new LocationCallback() {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
