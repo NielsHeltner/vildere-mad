@@ -29,21 +29,17 @@ import butterknife.ButterKnife;
 import food.wilder.R;
 import food.wilder.common.DaggerMapComponent;
 import food.wilder.common.ILocationService;
+import food.wilder.common.MapModule;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    public static final int PERMISSION_REQUEST_CODE = 6124;
-    public static final String[] PERMISSION_REQUESTS = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
+
 
     private GoogleMap map;
 
     @Inject
     ILocationService locationService;
 
-    private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
 
     @Override
@@ -54,7 +50,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         initMapView(savedInstanceState);
 
-        locationService = DaggerMapComponent.create().locationService();
+        locationService = DaggerMapComponent.builder().mapModule(new MapModule(this)).build().locationService();
         Log.d("fuck", "null? " + (locationService == null));
 
         initLocation();
@@ -64,12 +60,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { // checks if permissions are granted (https://developer.android.com/training/permissions/requesting)
             Log.d(getString(R.string.app_name), "Requesting permissions");
-            ActivityCompat.requestPermissions(this, PERMISSION_REQUESTS, PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, ILocationService.PERMISSION_REQUESTS, ILocationService.PERMISSION_REQUEST_CODE);
             return;
         }
 
         Log.d(getString(R.string.app_name), "Starting location client");
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(5000);
@@ -89,7 +85,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        //fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
     /**
@@ -97,7 +93,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_CODE) { // requestCode used to link permission requests together
+        if (requestCode == ILocationService.PERMISSION_REQUEST_CODE) { // requestCode used to link permission requests together
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // if the request is cancelled, the result arrays are empty
                 Log.d(getString(R.string.app_name), "Permission was granted");
                 initLocation();
@@ -118,13 +114,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+        /*fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
                 map.addMarker(new MarkerOptions().position(sydney).title("it's your boi"));
                 map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
             }
-        });
+        });*/
     }
 }

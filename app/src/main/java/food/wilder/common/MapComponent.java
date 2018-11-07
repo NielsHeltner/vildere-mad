@@ -1,5 +1,7 @@
 package food.wilder.common;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
