@@ -34,9 +34,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import food.wilder.R;
-import food.wilder.common.DaggerMapComponent;
-import food.wilder.common.ILocationService;
-import food.wilder.common.MapModule;
+import food.wilder.common.DaggerStorageComponent;
+import food.wilder.common.IForageData;
+import food.wilder.common.IStorage;
+import food.wilder.common.StorageComponent;
+import food.wilder.domain.ForageData;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -54,18 +56,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationClient;
 
     @Inject
-    ILocationService locationService;
+    IStorage<Location> gpsStorage;
+    @Inject
+    IStorage<IForageData> forageStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         ButterKnife.bind(this);
+        StorageComponent component = DaggerStorageComponent.create();
+        gpsStorage = component.provideGpsStorage();
+        forageStorage = component.provideForageStorage();
+
+        Log.d("fuck", "null? " + (gpsStorage == null));
+        Log.d("fuck", "null? " + (forageStorage == null));
 
         initLocation();
-
-        //locationService = DaggerMapComponent.builder().mapModule(new MapModule(this)).build().locationService();
-        //Log.d("fuck", "null? " + (locationService == null));
     }
 
     private void initLocation() {
@@ -97,6 +104,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
                     map.addMarker(new MarkerOptions().position(latlng).title(getTimeFormatted(location.getTime())));
+
+                    gpsStorage.add(location);
                 }
             }
         };
@@ -107,6 +116,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @OnClick(R.id.forageBtn)
     public void forage() {
         Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+        forageStorage.add(new ForageData(null, 1));
     }
 
     /**
