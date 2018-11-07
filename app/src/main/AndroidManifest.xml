@@ -25,6 +25,10 @@
             android:parentActivityName=".gui.MainActivity"/>
         <activity android:name=".gui.map.MapActivity"
             android:parentActivityName=".gui.MainActivity"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBZGvUV2TBKDuWs0OL4OveQ2qrLPvOP-Y8"/>
     </application>
 
 </manifest>
