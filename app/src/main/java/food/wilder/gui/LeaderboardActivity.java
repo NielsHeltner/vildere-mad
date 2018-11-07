@@ -1,10 +1,12 @@
 package food.wilder.gui;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,9 +51,6 @@ public class LeaderboardActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-//        mAdapter = new LeaderboardRecyclerViewAdapter(testData());
-//        mRecyclerView.setAdapter(mAdapter);
-
         populateRecyclerView();
     }
 
@@ -64,9 +63,9 @@ public class LeaderboardActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONArray response) {
-                       //createUserDataList(response);
-                       mAdapter = new LeaderboardRecyclerViewAdapter(createUserDataList(response));
-                       mRecyclerView.setAdapter(mAdapter);
+                        findViewById(R.id.loadingLayout).setVisibility(View.INVISIBLE);
+                        mAdapter = new LeaderboardRecyclerViewAdapter(createUserDataList(response));
+                        mRecyclerView.setAdapter(mAdapter);
                     }
                 }, new Response.ErrorListener() {
 
@@ -96,120 +95,4 @@ public class LeaderboardActivity extends AppCompatActivity {
         }
         return usersList;
     }
-
-    private List<UserData> testData() {
-        List<UserData> d = new ArrayList<>();
-
-        d.add(new UserData().setName("Niclas").setLevel(2));
-        d.add(new UserData().setName("Niels").setLevel(3));
-        d.add(new UserData().setName("Jakub").setLevel(10));
-
-        d.add(new UserData().setName("Niclas").setLevel(20));
-        d.add(new UserData().setName("Niels").setLevel(30));
-        d.add(new UserData().setName("Jakub").setLevel(100));
-
-        d.add(new UserData().setName("Niclas").setLevel(200));
-        d.add(new UserData().setName("Niels").setLevel(300));
-        d.add(new UserData().setName("Jakub").setLevel(1000));
-
-        d.add(new UserData().setName("Niclas").setLevel(2000));
-        d.add(new UserData().setName("Niels").setLevel(3000));
-        d.add(new UserData().setName("Jakub").setLevel(10000));
-
-        d.add(new UserData().setName("Niclas").setLevel(20000));
-        d.add(new UserData().setName("Niels").setLevel(30000));
-        d.add(new UserData().setName("Jakub").setLevel(100000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000));
-        d.add(new UserData().setName("Niels").setLevel(300000));
-        d.add(new UserData().setName("Jakub").setLevel(1000000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000000));
-        d.add(new UserData().setName("Niels").setLevel(300000000));
-        d.add(new UserData().setName("Jakub").setLevel(10000000));
-        d.add(new UserData().setName("Niclas").setLevel(2));
-        d.add(new UserData().setName("Niels").setLevel(3));
-        d.add(new UserData().setName("Jakub").setLevel(10));
-
-        d.add(new UserData().setName("Niclas").setLevel(20));
-        d.add(new UserData().setName("Niels").setLevel(30));
-        d.add(new UserData().setName("Jakub").setLevel(100));
-
-        d.add(new UserData().setName("Niclas").setLevel(200));
-        d.add(new UserData().setName("Niels").setLevel(300));
-        d.add(new UserData().setName("Jakub").setLevel(1000));
-
-        d.add(new UserData().setName("Niclas").setLevel(2000));
-        d.add(new UserData().setName("Niels").setLevel(3000));
-        d.add(new UserData().setName("Jakub").setLevel(10000));
-
-        d.add(new UserData().setName("Niclas").setLevel(20000));
-        d.add(new UserData().setName("Niels").setLevel(30000));
-        d.add(new UserData().setName("Jakub").setLevel(100000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000));
-        d.add(new UserData().setName("Niels").setLevel(300000));
-        d.add(new UserData().setName("Jakub").setLevel(1000000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000000));
-        d.add(new UserData().setName("Niels").setLevel(300000000));
-        d.add(new UserData().setName("Jakub").setLevel(10000000));
-        d.add(new UserData().setName("Niclas").setLevel(2));
-        d.add(new UserData().setName("Niels").setLevel(3));
-        d.add(new UserData().setName("Jakub").setLevel(10));
-
-        d.add(new UserData().setName("Niclas").setLevel(20));
-        d.add(new UserData().setName("Niels").setLevel(30));
-        d.add(new UserData().setName("Jakub").setLevel(100));
-
-        d.add(new UserData().setName("Niclas").setLevel(200));
-        d.add(new UserData().setName("Niels").setLevel(300));
-        d.add(new UserData().setName("Jakub").setLevel(1000));
-
-        d.add(new UserData().setName("Niclas").setLevel(2000));
-        d.add(new UserData().setName("Niels").setLevel(3000));
-        d.add(new UserData().setName("Jakub").setLevel(10000));
-
-        d.add(new UserData().setName("Niclas").setLevel(20000));
-        d.add(new UserData().setName("Niels").setLevel(30000));
-        d.add(new UserData().setName("Jakub").setLevel(100000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000));
-        d.add(new UserData().setName("Niels").setLevel(300000));
-        d.add(new UserData().setName("Jakub").setLevel(1000000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000000));
-        d.add(new UserData().setName("Niels").setLevel(300000000));
-        d.add(new UserData().setName("Jakub").setLevel(10000000));
-        d.add(new UserData().setName("Niclas").setLevel(2));
-        d.add(new UserData().setName("Niels").setLevel(3));
-        d.add(new UserData().setName("Jakub").setLevel(10));
-
-        d.add(new UserData().setName("Niclas").setLevel(20));
-        d.add(new UserData().setName("Niels").setLevel(30));
-        d.add(new UserData().setName("Jakub").setLevel(100));
-
-        d.add(new UserData().setName("Niclas").setLevel(200));
-        d.add(new UserData().setName("Niels").setLevel(300));
-        d.add(new UserData().setName("Jakub").setLevel(1000));
-
-        d.add(new UserData().setName("Niclas").setLevel(2000));
-        d.add(new UserData().setName("Niels").setLevel(3000));
-        d.add(new UserData().setName("Jakub").setLevel(10000));
-
-        d.add(new UserData().setName("Niclas").setLevel(20000));
-        d.add(new UserData().setName("Niels").setLevel(30000));
-        d.add(new UserData().setName("Jakub").setLevel(100000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000));
-        d.add(new UserData().setName("Niels").setLevel(300000));
-        d.add(new UserData().setName("Jakub").setLevel(1000000));
-
-        d.add(new UserData().setName("Niclas").setLevel(200000000));
-        d.add(new UserData().setName("Niels").setLevel(300000000));
-        d.add(new UserData().setName("Jakub").setLevel(10000000));
-
-        return d;
-    }
-
 }
