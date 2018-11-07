@@ -28,7 +28,6 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        // Inflate the custom layout
         View view = inflater.inflate(R.layout.recycler_view_layout, parent, false);
 
         ViewHolder vh = new ViewHolder(view);

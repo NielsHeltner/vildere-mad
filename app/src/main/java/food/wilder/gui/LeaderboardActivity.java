@@ -38,7 +38,6 @@ public class LeaderboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_leaderboard);
         ButterKnife.bind(this);
 
-
         setUpRecyclerView();
     }
 
@@ -61,9 +60,11 @@ public class LeaderboardActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONArray response) {
+
                         findViewById(R.id.loadingLayout).setVisibility(View.INVISIBLE);
                         mAdapter = new LeaderboardRecyclerViewAdapter(createUserDataList(response));
                         mRecyclerView.setAdapter(mAdapter);
+
                     }
                 }, new Response.ErrorListener() {
 
@@ -82,10 +83,9 @@ public class LeaderboardActivity extends AppCompatActivity {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
-                String name = jsonData.getString("username");
-                int level = jsonData.getInt("level");
-
-                usersList.add(new UserData().setName(name).setLevel(level));
+                usersList.add(new UserData()
+                        .setName(jsonData.getString("username"))
+                        .setLevel(jsonData.getInt("level")));
 
             } catch (JSONException e) {
                 e.printStackTrace();
