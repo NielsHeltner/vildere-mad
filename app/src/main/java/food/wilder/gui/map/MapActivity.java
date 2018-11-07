@@ -14,21 +14,31 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import food.wilder.R;
 import food.wilder.common.DaggerMapComponent;
 import food.wilder.common.ILocationService;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int PERMISSION_REQUEST_CODE = 6124;
     public static final String[] PERMISSION_REQUESTS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+
+    private GoogleMap map;
 
     @Inject
     ILocationService locationService;
@@ -42,6 +52,7 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         ButterKnife.bind(this);
 
+        initMapView(savedInstanceState);
 
         locationService = DaggerMapComponent.create().locationService();
         Log.d("fuck", "null? " + (locationService == null));
@@ -96,4 +107,24 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    private void initMapView(Bundle savedInstanceState) {
+        MapView mapView = findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        mapView.onResume();
+        mapView.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                LatLng sydney = new LatLng(location.getLatitude(), location.getLongitude());
+                map.addMarker(new MarkerOptions().position(sydney).title("it's your boi"));
+                map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            }
+        });
+    }
 }
