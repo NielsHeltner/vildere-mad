@@ -60,9 +60,7 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
-                usersList.add(new UserData()
-                        .setName(jsonData.getString("username"))
-                        .setLevel(jsonData.getInt("level")));
+                usersList.add(new UserData(jsonData.getString("username"), jsonData.getInt("level")));
 
             } catch (JSONException e) {
                 e.printStackTrace();

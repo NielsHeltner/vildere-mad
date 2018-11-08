@@ -5,21 +5,16 @@ public class UserData {
     private String name;
     private int level;
 
+    public UserData(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
     public String getName() {
         return name;
     }
 
-    public UserData setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public int getLevel() {
         return level;
-    }
-
-    public UserData setLevel(int level) {
-        this.level = level;
-        return this;
     }
 }
