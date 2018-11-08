@@ -25,4 +25,5 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
         // upload to server / database
         data.clear();
     }
+
 }

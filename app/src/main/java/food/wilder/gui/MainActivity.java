@@ -10,6 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import food.wilder.R;
+import food.wilder.gui.leaderboard.LeaderboardActivity;
 import food.wilder.gui.map.MapActivity;
 
 public class MainActivity extends AppCompatActivity {

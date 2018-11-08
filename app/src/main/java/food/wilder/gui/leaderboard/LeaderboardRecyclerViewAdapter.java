@@ -1,4 +1,4 @@
-package food.wilder.gui;
+package food.wilder.gui.leaderboard;
 
 
 import android.content.Context;
