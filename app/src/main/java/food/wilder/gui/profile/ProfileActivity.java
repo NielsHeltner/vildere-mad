@@ -32,8 +32,11 @@ public class ProfileActivity extends AppCompatActivity {
     TextView userLevel;
     @BindView(R.id.profile_image_view)
     ImageView userAvatar;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.textForages)
+    TextView textForages;
 
-    private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
@@ -85,7 +88,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(this);
@@ -96,8 +98,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void populateRecyclerView() {
         String query = "?username=" + userIntent.getStringExtra("username");
-            userStorage.get(this, query, (Callback<List<TripData>>) tripDataList -> {
-                //mAdapter = new ProfileForagesRecyclerViewAdapter(tripDataList);
+            tripStorage.get(this, query, (Callback<List<TripData>>) tripDataList -> {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                textForages.setVisibility(View.VISIBLE);
+                mAdapter = new ProfileForagesRecyclerViewAdapter(tripDataList);
                 mRecyclerView.setAdapter(mAdapter);
             });
     }
