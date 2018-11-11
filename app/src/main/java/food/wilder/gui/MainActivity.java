@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import food.wilder.R;
 import food.wilder.gui.leaderboard.LeaderboardActivity;
 import food.wilder.gui.map.MapActivity;
+import food.wilder.gui.profile.ProfileActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.profileBtn)
     public void goToProfile() {
         Intent profileIntent = new Intent(this, ProfileActivity.class);
+        profileIntent.putExtra("username", "Niclas");
         startActivity(profileIntent);
     }
 

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import food.wilder.R;
@@ -17,7 +16,7 @@ import food.wilder.domain.UserData;
 
 public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<LeaderboardRecyclerViewAdapter.ViewHolder> {
 
-    private List<UserData> userData = new ArrayList<>();
+    private List<UserData> userData;
 
     public LeaderboardRecyclerViewAdapter(List<UserData> userData) {
         this.userData = userData;

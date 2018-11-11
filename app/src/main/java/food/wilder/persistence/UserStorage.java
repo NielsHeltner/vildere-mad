@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import food.wilder.R;
 import food.wilder.common.IStorage;
 import food.wilder.common.Callback;
 import food.wilder.domain.UserData;
@@ -41,8 +42,12 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
     }
 
     @Override
-    public void get(Context context, String url, Callback callback) {
+    public void get(Context context, String query, Callback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
+        String url = context.getResources().getString(R.string.get_users_end_point);
+        if (query != null) {
+            url += query;
+        }
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, response -> {
