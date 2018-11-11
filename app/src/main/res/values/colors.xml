@@ -3,4 +3,6 @@
     <color name="colorPrimary">#125688</color>
     <color name="colorPrimaryDark">#125688</color>
     <color name="colorAccent">#ee5350</color>
+    <color name="recyclerLayoutEven">#e2e2e2</color>
+    <color name="recyclerLayoutUneven">#fff</color>
 </resources>

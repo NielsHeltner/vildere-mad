@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="food.wilder">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,9 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".gui.LeaderboardActivity" />
-        <activity android:name=".gui.ProfileActivity" />
-        <activity android:name=".gui.MapActivity" />
+        <activity android:name=".gui.leaderboard.LeaderboardActivity"
+            android:parentActivityName=".gui.MainActivity"/>
+        <activity android:name=".gui.ProfileActivity"
+            android:parentActivityName=".gui.MainActivity"/>
+        <activity android:name=".gui.map.MapActivity"
+            android:parentActivityName=".gui.MainActivity"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBZGvUV2TBKDuWs0OL4OveQ2qrLPvOP-Y8"/>
     </application>
 
 </manifest>

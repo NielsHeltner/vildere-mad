@@ -5,5 +5,11 @@
 
     <string name="profile_btn">Profile</string>
     <string name="leaderboard_btn">Leaderboard</string>
-    <string name="map_btn">Map</string>
+    <string name="map_btn">Start new route</string>
+
+    <string name="get_users_end_point">https://je0k9wn7ag.execute-api.eu-west-2.amazonaws.com/prod/vilderemad/get-users</string>
+    <string name="level">Level</string>
+    <string name="loading">Loading...</string>
+    <string name="name">Name</string>
+    <string name="leaderboard">Leaderboard</string>
 </resources>
