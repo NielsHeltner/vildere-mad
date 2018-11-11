@@ -6,9 +6,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import food.wilder.domain.TripData;
 import food.wilder.domain.UserData;
 import food.wilder.persistence.ForageStorage;
 import food.wilder.persistence.GpsStorage;
+import food.wilder.persistence.TripStorage;
 import food.wilder.persistence.UserStorage;
 
 @Module
@@ -30,6 +32,12 @@ public class StorageModule {
     @Singleton
     public IStorage<UserData> provideUserStorage() {
         return UserStorage.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    public IStorage<TripData> provideTripStorage() {
+        return TripStorage.getInstance();
     }
 
 }

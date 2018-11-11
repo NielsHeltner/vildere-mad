@@ -3,6 +3,8 @@ package food.wilder.gui.profile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,9 +21,10 @@ import food.wilder.common.Callback;
 import food.wilder.common.DaggerStorageComponent;
 import food.wilder.common.IStorage;
 import food.wilder.common.StorageComponent;
+import food.wilder.domain.TripData;
 import food.wilder.domain.UserData;
 
-public class ProfileActivity extends AppCompatActivity implements Callback<List<UserData>> {
+public class ProfileActivity extends AppCompatActivity {
 
     @BindView(R.id.profile_text_name)
     TextView username;
@@ -30,8 +33,13 @@ public class ProfileActivity extends AppCompatActivity implements Callback<List<
     @BindView(R.id.profile_image_view)
     ImageView userAvatar;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     private Intent userIntent;
     private IStorage<UserData> userStorage;
+    private IStorage<TripData> tripStorage;
     private UserData userData;
 
 
@@ -43,24 +51,24 @@ public class ProfileActivity extends AppCompatActivity implements Callback<List<
 
         StorageComponent component = DaggerStorageComponent.create();
         userStorage = component.provideUserStorage();
+        tripStorage = component.provideTripStorage();
         this.userIntent = getIntent();
 
         getUserData();
+        setUpRecyclerView();
     }
 
     private void getUserData() {
         String query = "?username=" + userIntent.getStringExtra("username");
-        userStorage.get(this, query, this);
-    }
+        userStorage.get(this, query, (Callback<List<UserData>>) userDataList -> {
 
-    @Override
-    public void callback(List<UserData> userDataList) {
-        if (userDataList.size() == 1) {
-            userData = userDataList.get(0);
-            insertUserData();
-        } else {
-            Log.d("PROFILE_ERROR", "Get did not return only 1 user. Size: " + userDataList.size());
-        }
+            if (userDataList.size() == 1) {
+                userData = userDataList.get(0);
+                insertUserData();
+            } else {
+                Log.d("PROFILE_ERROR", "Get did not return only 1 user. Size: " + userDataList.size());
+            }
+        });
     }
 
     private void insertUserData(){
@@ -74,5 +82,23 @@ public class ProfileActivity extends AppCompatActivity implements Callback<List<
     private void getUserAvatar(int level) {
         String url = getResources().getString(R.string.avatar_bucket_link) + level + ".jpg";
         Glide.with(this).load(url).into(userAvatar);
+    }
+
+    private void setUpRecyclerView() {
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        populateRecyclerView();
+    }
+
+    private void populateRecyclerView() {
+        String query = "?username=" + userIntent.getStringExtra("username");
+            userStorage.get(this, query, (Callback<List<TripData>>) tripDataList -> {
+                //mAdapter = new ProfileForagesRecyclerViewAdapter(tripDataList);
+                mRecyclerView.setAdapter(mAdapter);
+            });
     }
 }
