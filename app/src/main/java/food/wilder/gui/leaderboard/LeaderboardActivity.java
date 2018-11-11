@@ -45,7 +45,6 @@ public class LeaderboardActivity extends AppCompatActivity implements Callback<L
     }
 
     private void populateRecyclerView() {
-        String url = getResources().getString(R.string.get_users_end_point);
         userStorage.get(this, null, this);
     }
 
