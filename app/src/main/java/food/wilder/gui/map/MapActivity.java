@@ -123,12 +123,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(tripId == null) {
             tripStorage.upload(this, "Niclas", callback -> {
-                tripId = ((TripData) callback).getId();
+                Log.d("FUCKING", "callback");
+                tripId = (String) callback;
                 //forageStorage.upload(this, tripId);
-                //gpsStorage.upload(this, tripId);
+                gpsStorage.upload(this, tripId);
 
                 Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
             });
+        } else {
+            gpsStorage.upload(this, tripId);
         }
 
     }
