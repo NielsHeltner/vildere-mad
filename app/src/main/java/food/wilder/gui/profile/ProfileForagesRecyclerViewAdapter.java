@@ -11,13 +11,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import food.wilder.R;
-import food.wilder.domain.TripData;
+import food.wilder.common.ITripData;
 
 public class ProfileForagesRecyclerViewAdapter extends RecyclerView.Adapter<ProfileForagesRecyclerViewAdapter.ViewHolder> {
 
-    private List<TripData> tripData;
+    private List<ITripData> tripData;
 
-    public ProfileForagesRecyclerViewAdapter(List<TripData> tripData) {
+    public ProfileForagesRecyclerViewAdapter(List<ITripData> tripData) {
         this.tripData = tripData;
     }
 
@@ -34,9 +34,9 @@ public class ProfileForagesRecyclerViewAdapter extends RecyclerView.Adapter<Prof
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        TripData trip = tripData.get(position);
+        ITripData trip = tripData.get(position);
         holder.tripId.setText(trip.getId());
-        holder.timestamp.setText(String.valueOf(trip.getTimestamp()));
+        holder.timestamp.setText(String.valueOf(trip.getStartTime()));
         if(position % 2 == 0) {
             holder.layout.setBackgroundColor(holder.layout.getResources().getColor(R.color.recyclerLayoutEven));
         } else {

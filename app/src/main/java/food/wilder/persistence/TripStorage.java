@@ -17,18 +17,20 @@ import java.util.Comparator;
 import java.util.List;
 
 import food.wilder.R;
-import food.wilder.common.Callback;
+import food.wilder.common.AsyncPersistenceCallback;
 import food.wilder.common.IStorage;
+import food.wilder.common.ITripData;
 import food.wilder.domain.TripData;
 
-public class TripStorage extends AbstractBufferedStorage<TripData> {
-    private static IStorage<TripData> instance;
+public class TripStorage extends AbstractBufferedStorage<ITripData> {
+
+    private static IStorage<ITripData> instance;
 
     private TripStorage() {
     }
 
-    public static IStorage<TripData> getInstance() {
-        if(instance == null) {
+    public static IStorage<ITripData> getInstance() {
+        if (instance == null) {
             instance = new TripStorage();
         }
         return instance;
@@ -40,7 +42,7 @@ public class TripStorage extends AbstractBufferedStorage<TripData> {
     }
 
     @Override
-    public void get(Context context, String query, Callback callback) {
+    public void get(Context context, String query, AsyncPersistenceCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.get_trips_point);
         if (query != null) {
@@ -57,10 +59,10 @@ public class TripStorage extends AbstractBufferedStorage<TripData> {
 
     }
 
-    private List<TripData> createTripsList(JSONArray jsonDataArray) {
-        List<TripData> tripsList = new ArrayList<>();
+    private List<ITripData> createTripsList(JSONArray jsonDataArray) {
+        List<ITripData> tripsList = new ArrayList<>();
 
-        for(int i = 0; i < jsonDataArray.length(); i++) {
+        for (int i = 0; i < jsonDataArray.length(); i++) {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
@@ -70,7 +72,8 @@ public class TripStorage extends AbstractBufferedStorage<TripData> {
                 e.printStackTrace();
             }
         }
-        tripsList.sort(Comparator.comparing(TripData::getTimestamp).reversed());
+        tripsList.sort(Comparator.comparingLong(ITripData::getStartTime).reversed());
         return tripsList;
     }
+
 }
