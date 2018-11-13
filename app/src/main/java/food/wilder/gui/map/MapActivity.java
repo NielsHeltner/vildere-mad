@@ -69,9 +69,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
 
-        Log.d("fuck", "null? " + (gpsStorage == null));
-        Log.d("fuck", "null? " + (forageStorage == null));
-
         initLocation();
     }
 
