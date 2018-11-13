@@ -1,5 +1,7 @@
 package food.wilder.common;
 
-public interface Callback<T> {
+public interface AsyncPersistenceCallback<T> {
+
     void callback(T t);
+
 }

@@ -7,11 +7,20 @@ import food.wilder.common.IForageData;
 public class ForageData implements IForageData {
 
     private Location location;
-    private int plantType;
+    private String species;
 
-    public ForageData(Location location, int plantType) {
+    public ForageData(Location location, String species) {
         this.location = location;
-        this.plantType = plantType;
+        this.species = species;
     }
 
+    @Override
+    public Location getLocation() {
+        return location;
+    }
+
+    @Override
+    public String getSpecies() {
+        return species;
+    }
 }
