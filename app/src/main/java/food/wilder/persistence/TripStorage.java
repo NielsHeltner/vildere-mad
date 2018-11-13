@@ -1,6 +1,5 @@
 package food.wilder.persistence;
 
-
 import android.content.Context;
 import android.util.Log;
 
@@ -18,24 +17,23 @@ import java.util.Comparator;
 import java.util.List;
 
 import food.wilder.R;
-import food.wilder.common.IStorage;
 import food.wilder.common.Callback;
-import food.wilder.domain.UserData;
+import food.wilder.common.IStorage;
+import food.wilder.domain.TripData;
 
-public class UserStorage extends AbstractBufferedStorage<UserData> {
+public class TripStorage extends AbstractBufferedStorage<TripData> {
+    private static IStorage<TripData> instance;
 
-    private static IStorage<UserData> instance;
-
-    private UserStorage() {
-        data = new ArrayList();
+    private TripStorage() {
     }
 
-    public static IStorage<UserData> getInstance() {
+    public static IStorage<TripData> getInstance() {
         if(instance == null) {
-            instance = new UserStorage();
+            instance = new TripStorage();
         }
         return instance;
     }
+
     @Override
     public void upload() {
 
@@ -44,7 +42,7 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
     @Override
     public void get(Context context, String query, Callback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = context.getResources().getString(R.string.get_users_end_point);
+        String url = context.getResources().getString(R.string.get_trips_point);
         if (query != null) {
             url += query;
         }
@@ -52,26 +50,27 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, response -> {
 
-                    callback.callback(createUserDataList(response));
+                    callback.callback(createTripsList(response));
 
-                }, error -> Log.d("USER_GET_REQUEST", error.getMessage()));
+                }, error -> Log.d("TRIP_GET_REQUEST", error.getMessage()));
         queue.add(jsonArrayRequest);
+
     }
 
-    private List<UserData> createUserDataList(JSONArray jsonDataArray) {
-        List<UserData> usersList = new ArrayList<>();
+    private List<TripData> createTripsList(JSONArray jsonDataArray) {
+        List<TripData> tripsList = new ArrayList<>();
 
         for(int i = 0; i < jsonDataArray.length(); i++) {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
-                usersList.add(new UserData(jsonData.getString("username"), jsonData.getInt("level")));
+                tripsList.add(new TripData(jsonData.getString("id_trip"), jsonData.getInt("timestamp")));
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        usersList.sort(Comparator.comparing(UserData::getLevel).reversed());
-        return usersList;
+        tripsList.sort(Comparator.comparing(TripData::getTimestamp).reversed());
+        return tripsList;
     }
 }

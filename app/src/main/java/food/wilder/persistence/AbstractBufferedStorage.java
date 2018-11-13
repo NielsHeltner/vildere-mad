@@ -18,6 +18,6 @@ public abstract class AbstractBufferedStorage<T> implements IStorage<T> {
 
 
     @Override
-    public void get(Context context, String url, Callback Callback) {  }
+    public void get(Context context, String url, Callback callback) {  }
 
 }

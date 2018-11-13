@@ -5,6 +5,7 @@ import android.location.Location;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import food.wilder.domain.TripData;
 import food.wilder.domain.UserData;
 
 @Singleton
@@ -16,5 +17,7 @@ public interface StorageComponent {
     IStorage<IForageData> provideForageStorage();
 
     IStorage<UserData> provideUserStorage();
+
+    IStorage<TripData> provideTripStorage();
 
 }
