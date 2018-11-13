@@ -14,4 +14,11 @@ public class ForageData implements IForageData {
         this.plantType = plantType;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public int getPlantType() {
+        return plantType;
+    }
 }

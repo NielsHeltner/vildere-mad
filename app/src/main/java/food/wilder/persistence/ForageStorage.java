@@ -35,24 +35,6 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
 
     @Override
     public void upload(Context context, String tripId) {
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String url = context.getResources().getString(R.string.get_users_end_point);
-
-        StringRequest postRequest = new StringRequest
-                (Request.Method.POST, url, response -> {
-
-                    //callback.callback(createUserDataList(response));
-
-                }, error -> Log.d("USER_GET_REQUEST", error.getMessage())) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                //params.put("user",userAccount.getUsername());
-
-                return params;
-            }
-        };
-        queue.add(postRequest);
     }
 
 }
