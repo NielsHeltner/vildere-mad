@@ -9,6 +9,7 @@
 
     <string name="get_users_end_point">https://je0k9wn7ag.execute-api.eu-west-2.amazonaws.com/prod/vilderemad/get-users</string>
     <string name="get_trips_point">https://je0k9wn7ag.execute-api.eu-west-2.amazonaws.com/prod/vilderemad/get-trips</string>
+    <string name="add_trip_end_point">https://je0k9wn7ag.execute-api.eu-west-2.amazonaws.com/prod/vilderemad/add-trip</string>
     <string name="avatar_bucket_link">https://s3.eu-west-2.amazonaws.com/vilderemad/avatars/avatar</string>
     <string name="level">Level</string>
     <string name="loading">Loading...</string>

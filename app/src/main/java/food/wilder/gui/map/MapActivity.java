@@ -39,6 +39,7 @@ import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
 import food.wilder.common.StorageComponent;
 import food.wilder.domain.ForageData;
+import food.wilder.domain.TripData;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -54,11 +55,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap map;
 
     private FusedLocationProviderClient fusedLocationClient;
+    private String tripId;
 
     @Inject
     IStorage<Location> gpsStorage;
     @Inject
     IStorage<IForageData> forageStorage;
+    IStorage<TripData> tripStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         StorageComponent component = DaggerStorageComponent.create();
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
+        tripStorage = component.provideTripStorage();
 
         Log.d("fuck", "null? " + (gpsStorage == null));
         Log.d("fuck", "null? " + (forageStorage == null));
@@ -115,8 +119,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @OnClick(R.id.forageBtn)
     public void forage() {
-        Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
         forageStorage.add(new ForageData(null, 1));
+
+        if(tripId == null) {
+            tripStorage.upload(this, "Niclas", callback -> {
+                tripId = ((TripData) callback).getId();
+                //forageStorage.upload(this, tripId);
+                //gpsStorage.upload(this, tripId);
+
+                Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
+            });
+        }
+
     }
 
     /**
@@ -145,6 +159,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 map.addMarker(new MarkerOptions().position(lastLocation).title("it's your boi"));
                 map.moveCamera(CameraUpdateFactory.newLatLng(lastLocation));
+                gpsStorage.add(location);
             }
         });
     }

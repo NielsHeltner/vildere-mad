@@ -1,6 +1,7 @@
 package food.wilder.persistence;
 
 import android.content.Context;
+import android.telecom.Call;
 
 import java.util.List;
 
@@ -15,6 +16,12 @@ public abstract class AbstractBufferedStorage<T> implements IStorage<T> {
     public void add(T t) {
         data.add(t);
     }
+
+    @Override
+    public void upload(Context context, String username, Callback callback) {}
+
+    @Override
+    public void upload(Context context, String id) {}
 
 
     @Override

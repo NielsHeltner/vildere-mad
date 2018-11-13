@@ -37,11 +37,6 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
         return instance;
     }
     @Override
-    public void upload() {
-
-    }
-
-    @Override
     public void get(Context context, String query, Callback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.get_users_end_point);
