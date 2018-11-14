@@ -145,6 +145,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    @OnClick(R.id.endTrip)
+    public void endTrip() {
+        tripId = null;
+        finish();
+    }
+
     /**
      * Invoked when the user responds to the app's permission request
      */
