@@ -84,4 +84,5 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
         Log.d("FUCKING CREATE POINTS", jsonArray.length()+"");
         return jsonArray;
     }
+
 }

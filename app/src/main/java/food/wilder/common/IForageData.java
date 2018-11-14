@@ -1,6 +1,10 @@
 package food.wilder.common;
 
-public interface IForageData {
+import android.location.Location;
 
+public interface IForageData {
+    Location getLocation();
+
+     String getPlantType();
 
 }

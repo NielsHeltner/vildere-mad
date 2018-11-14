@@ -2,6 +2,8 @@ package food.wilder.gui.map;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ import food.wilder.domain.TripData;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int INIT_PERMISSION_REQUEST_CODE = 6124;
+    public static final int FORAGE_REQUEST_CODE = 100;
     public static final int LAST_LCOATION_PERMISSION_REQUEST_CODE = 6125;
     public static final String[] PERMISSION_REQUESTS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -53,9 +56,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @BindView(R.id.map)
     MapView mapView;
     private GoogleMap map;
+    private Location lastLocation;
 
     private FusedLocationProviderClient fusedLocationClient;
-    private String tripId;
+    private static String tripId;
 
     @Inject
     IStorage<Location> gpsStorage;
@@ -72,6 +76,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
         tripStorage = component.provideTripStorage();
+
+        tripId = null;
 
         Log.d("fuck", "null? " + (gpsStorage == null));
         Log.d("fuck", "null? " + (forageStorage == null));
@@ -103,6 +109,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
+                    lastLocation = location;
                     Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
                     Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
 
@@ -119,7 +126,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @OnClick(R.id.forageBtn)
     public void forage() {
-        forageStorage.add(new ForageData(null, 1));
+        //forageStorage.add(new ForageData(null, 1));
+        Intent intent = new Intent(this, ForageActivity.class);
 
         if(tripId == null) {
             tripStorage.upload(this, "Niclas", callback -> {
@@ -132,6 +140,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
         } else {
             gpsStorage.upload(this, tripId);
+            startActivityForResult(intent, FORAGE_REQUEST_CODE);
         }
 
     }
@@ -156,14 +165,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.addMarker(new MarkerOptions().position(lastLocation).title("it's your boi"));
-                map.moveCamera(CameraUpdateFactory.newLatLng(lastLocation));
-                gpsStorage.add(location);
-            }
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            map.addMarker(new MarkerOptions().position(lastLocation).title("it's your boi"));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 17f));
+            gpsStorage.add(location);
         });
     }
 
@@ -176,6 +182,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String getTimeFormatted(long timeMs) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
         return simpleDateFormat.format(new Date(timeMs));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == FORAGE_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                String plantName = data.getStringExtra("result");
+                forageStorage.add(new ForageData(lastLocation, plantName));
+                forageStorage.upload(this, tripId);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 
 }
