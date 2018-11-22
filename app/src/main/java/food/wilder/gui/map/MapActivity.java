@@ -69,9 +69,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
 
-        Log.d("fuck", "null? " + (gpsStorage == null));
-        Log.d("fuck", "null? " + (forageStorage == null));
-
         initLocation();
     }
 
@@ -102,9 +99,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
                     Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
 
-                    LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-                    map.addMarker(new MarkerOptions().position(latlng).title(getTimeFormatted(location.getTime())));
-
                     gpsStorage.add(location);
                 }
             }
@@ -113,10 +107,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.forageBtn)
     public void forage() {
         Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
-        forageStorage.add(new ForageData(null, 1));
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
+
+                forageStorage.add(new ForageData(location, 1));
+            }
+        });
     }
 
     /**
@@ -138,13 +142,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.addMarker(new MarkerOptions().position(lastLocation).title("it's your boi"));
-                map.moveCamera(CameraUpdateFactory.newLatLng(lastLocation));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
             }
         });
     }
