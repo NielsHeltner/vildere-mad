@@ -2,6 +2,8 @@ package food.wilder.gui.map;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,6 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityTransition;
+import com.google.android.gms.location.ActivityTransitionRequest;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -22,10 +28,14 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -44,6 +54,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public static final int INIT_PERMISSION_REQUEST_CODE = 6124;
     public static final int LAST_LCOATION_PERMISSION_REQUEST_CODE = 6125;
+    public static final int PENDING_INTENT = 123;
     public static final String[] PERMISSION_REQUESTS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -70,6 +81,56 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         forageStorage = component.provideForageStorage();
 
         initLocation();
+        initTransition();
+    }
+
+    private void initTransition() {
+        List<ActivityTransition> transitions = new ArrayList<>();
+
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.WALKING)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                        .build());
+
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.WALKING)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                        .build());
+
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.STILL)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                        .build());
+
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.STILL)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                        .build());
+
+        Intent broadcast = new Intent(this, TransitionReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT, broadcast, 0);
+
+
+        ActivityTransitionRequest request = new ActivityTransitionRequest(transitions);
+        Task<Void> task =
+                ActivityRecognition.getClient(this).requestActivityTransitionUpdates(request, pendingIntent);
+
+        task.addOnSuccessListener(
+                result -> {
+                    Log.d("TRANSITION", "Success");
+
+                }
+        );
+
+        task.addOnFailureListener(
+                e -> {
+                    // Handle error
+                }
+        );
     }
 
     private void initLocation() {
