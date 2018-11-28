@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 import food.wilder.common.IStorage;
-import food.wilder.common.Callback;
+import food.wilder.common.AsyncPersistenceCallback;
 
 public abstract class AbstractBufferedStorage<T> implements IStorage<T> {
 
@@ -16,8 +16,8 @@ public abstract class AbstractBufferedStorage<T> implements IStorage<T> {
         data.add(t);
     }
 
-
     @Override
-    public void get(Context context, String url, Callback callback) {  }
+    public void get(Context context, String url, AsyncPersistenceCallback callback) {
+    }
 
 }

@@ -1,6 +1,8 @@
 package food.wilder.domain;
 
-public class UserData {
+import food.wilder.common.IUserData;
+
+public class UserData implements IUserData {
 
     private String name;
     private int level;
@@ -10,11 +12,14 @@ public class UserData {
         this.level = level;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getLevel() {
         return level;
     }
+
 }

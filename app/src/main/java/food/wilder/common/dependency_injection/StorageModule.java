@@ -1,4 +1,4 @@
-package food.wilder.common;
+package food.wilder.common.dependency_injection;
 
 import android.location.Location;
 
@@ -6,8 +6,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import food.wilder.domain.TripData;
-import food.wilder.domain.UserData;
+import food.wilder.common.IForageData;
+import food.wilder.common.IStorage;
+import food.wilder.common.ITripData;
+import food.wilder.common.IUserData;
 import food.wilder.persistence.ForageStorage;
 import food.wilder.persistence.GpsStorage;
 import food.wilder.persistence.TripStorage;
@@ -30,13 +32,13 @@ public class StorageModule {
 
     @Provides
     @Singleton
-    public IStorage<UserData> provideUserStorage() {
+    public IStorage<IUserData> provideUserStorage() {
         return UserStorage.getInstance();
     }
 
     @Provides
     @Singleton
-    public IStorage<TripData> provideTripStorage() {
+    public IStorage<ITripData> provideTripStorage() {
         return TripStorage.getInstance();
     }
 

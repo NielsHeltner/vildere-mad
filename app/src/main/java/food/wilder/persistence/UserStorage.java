@@ -19,30 +19,32 @@ import java.util.List;
 
 import food.wilder.R;
 import food.wilder.common.IStorage;
-import food.wilder.common.Callback;
+import food.wilder.common.AsyncPersistenceCallback;
+import food.wilder.common.IUserData;
 import food.wilder.domain.UserData;
 
-public class UserStorage extends AbstractBufferedStorage<UserData> {
+public class UserStorage extends AbstractBufferedStorage<IUserData> {
 
-    private static IStorage<UserData> instance;
+    private static IStorage<IUserData> instance;
 
     private UserStorage() {
         data = new ArrayList();
     }
 
-    public static IStorage<UserData> getInstance() {
-        if(instance == null) {
+    public static IStorage<IUserData> getInstance() {
+        if (instance == null) {
             instance = new UserStorage();
         }
         return instance;
     }
+
     @Override
     public void upload() {
 
     }
 
     @Override
-    public void get(Context context, String query, Callback callback) {
+    public void get(Context context, String query, AsyncPersistenceCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.get_users_end_point);
         if (query != null) {
@@ -58,10 +60,10 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
         queue.add(jsonArrayRequest);
     }
 
-    private List<UserData> createUserDataList(JSONArray jsonDataArray) {
-        List<UserData> usersList = new ArrayList<>();
+    private List<IUserData> createUserDataList(JSONArray jsonDataArray) {
+        List<IUserData> usersList = new ArrayList<>();
 
-        for(int i = 0; i < jsonDataArray.length(); i++) {
+        for (int i = 0; i < jsonDataArray.length(); i++) {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
@@ -71,7 +73,8 @@ public class UserStorage extends AbstractBufferedStorage<UserData> {
                 e.printStackTrace();
             }
         }
-        usersList.sort(Comparator.comparing(UserData::getLevel).reversed());
+        usersList.sort(Comparator.comparingInt(IUserData::getLevel).reversed());
         return usersList;
     }
+
 }

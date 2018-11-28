@@ -8,6 +8,6 @@ public interface IStorage<T> {
 
     void upload();
 
-    void get(Context context, String query, Callback callback);
+    void get(Context context, String query, AsyncPersistenceCallback callback);
 
 }
