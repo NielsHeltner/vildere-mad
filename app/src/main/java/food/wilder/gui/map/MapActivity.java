@@ -5,16 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +23,10 @@ import com.google.android.gms.tasks.Task;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -60,6 +60,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Inject
     IStorage<IForageData> forageStorage;
 
+    private ScheduledExecutorService executorService;
+    private Future<?> locationFuture;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         StorageComponent component = DaggerStorageComponent.create();
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
+        executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
         initLocation();
     }
@@ -84,27 +88,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         initMapView(null);
 
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
+        locationFuture = executorService.scheduleAtFixedRate(() -> {
+            //if accelerometer crossed threshold then do the following:
+            getLastLocation().addOnSuccessListener(location -> {
+                if (location == null) {
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
-                    Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
-                    Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
 
-                    gpsStorage.add(location);
-                }
-            }
-        };
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+                gpsStorage.add(location);
+            });
+        }, 0, 5, TimeUnit.SECONDS);
+        //to stop: locationFuture.cancel(true);
     }
 
     @OnClick(R.id.forageBtn)
