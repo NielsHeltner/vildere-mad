@@ -15,7 +15,7 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
     }
 
     public static IStorage<Location> getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new GpsStorage();
         }
         return instance;

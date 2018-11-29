@@ -34,10 +34,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import food.wilder.R;
-import food.wilder.common.DaggerStorageComponent;
 import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
-import food.wilder.common.StorageComponent;
+import food.wilder.common.dependency_injection.DaggerStorageComponent;
+import food.wilder.common.dependency_injection.StorageComponent;
 import food.wilder.domain.ForageData;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {

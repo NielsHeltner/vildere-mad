@@ -1,20 +1,25 @@
 package food.wilder.domain;
 
-public class TripData {
+import food.wilder.common.ITripData;
+
+public class TripData implements ITripData {
 
     private String id;
-    private int timestamp;
+    private long startTime;
 
-    public TripData(String id, int timestamp) {
+    public TripData(String id, long startTime) {
         this.id = id;
-        this.timestamp = timestamp;
+        this.startTime = startTime;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
-    public int getTimestamp() {
-        return timestamp;
+    @Override
+    public long getStartTime() {
+        return startTime;
     }
+
 }

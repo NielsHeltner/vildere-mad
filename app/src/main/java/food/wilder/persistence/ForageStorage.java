@@ -14,7 +14,7 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
     }
 
     public static IStorage<IForageData> getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ForageStorage();
         }
         return instance;

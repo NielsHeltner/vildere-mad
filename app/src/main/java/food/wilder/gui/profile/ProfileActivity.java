@@ -17,12 +17,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import food.wilder.R;
-import food.wilder.common.Callback;
-import food.wilder.common.DaggerStorageComponent;
+import food.wilder.common.AsyncPersistenceCallback;
 import food.wilder.common.IStorage;
-import food.wilder.common.StorageComponent;
-import food.wilder.domain.TripData;
-import food.wilder.domain.UserData;
+import food.wilder.common.ITripData;
+import food.wilder.common.IUserData;
+import food.wilder.common.dependency_injection.DaggerStorageComponent;
+import food.wilder.common.dependency_injection.StorageComponent;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -41,9 +41,9 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Intent userIntent;
-    private IStorage<UserData> userStorage;
-    private IStorage<TripData> tripStorage;
-    private UserData userData;
+    private IStorage<IUserData> userStorage;
+    private IStorage<ITripData> tripStorage;
+    private IUserData userData;
 
 
     @Override
@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void getUserData() {
         String query = "?username=" + userIntent.getStringExtra("username");
-        userStorage.get(this, query, (Callback<List<UserData>>) userDataList -> {
+        userStorage.get(this, query, (AsyncPersistenceCallback<List<IUserData>>) userDataList -> {
 
             if (userDataList.size() == 1) {
                 userData = userDataList.get(0);
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void insertUserData(){
+    private void insertUserData() {
         findViewById(R.id.loadingLayout).setVisibility(View.INVISIBLE);
 
         username.setText(userData.getName());
@@ -98,11 +98,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void populateRecyclerView() {
         String query = "?username=" + userIntent.getStringExtra("username");
-            tripStorage.get(this, query, (Callback<List<TripData>>) tripDataList -> {
-                mRecyclerView.setVisibility(View.VISIBLE);
-                textForages.setVisibility(View.VISIBLE);
-                mAdapter = new ProfileForagesRecyclerViewAdapter(tripDataList);
-                mRecyclerView.setAdapter(mAdapter);
-            });
+        tripStorage.get(this, query, (AsyncPersistenceCallback<List<ITripData>>) tripDataList -> {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            textForages.setVisibility(View.VISIBLE);
+            mAdapter = new ProfileForagesRecyclerViewAdapter(tripDataList);
+            mRecyclerView.setAdapter(mAdapter);
+        });
     }
+
 }
