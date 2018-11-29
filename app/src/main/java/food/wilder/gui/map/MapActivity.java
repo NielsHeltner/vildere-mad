@@ -115,7 +115,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
             map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
 
-            forageStorage.add(new ForageData(location, 1));
+            forageStorage.add(new ForageData(location, "Placeholder"));
         });
     }
 
