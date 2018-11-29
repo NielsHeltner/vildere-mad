@@ -22,7 +22,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,19 +107,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
-    @SuppressLint("MissingPermission")
     @OnClick(R.id.forageBtn)
     public void forage() {
         Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
+        getLastLocation().addOnSuccessListener(location -> {
+            LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
 
-                forageStorage.add(new ForageData(location, 1));
-            }
+            forageStorage.add(new ForageData(location, 1));
         });
     }
 
@@ -145,13 +141,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
-            }
+        getLastLocation().addOnSuccessListener(location -> {
+            LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
         });
+    }
+
+    @SuppressLint("MissingPermission")
+    private Task<Location> getLastLocation() {
+        return fusedLocationClient.getLastLocation();
     }
 
     private void initMapView(Bundle savedInstanceState) {
