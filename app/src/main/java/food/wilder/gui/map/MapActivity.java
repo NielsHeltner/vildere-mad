@@ -48,6 +48,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+    public static final long DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS = 5;
+    public static final long DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS = 15;
 
     @BindView(R.id.map)
     MapView mapView;
@@ -60,8 +62,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Inject
     IStorage<IForageData> forageStorage;
 
+    private long dutyCycle = DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS;
     private ScheduledExecutorService executorService;
     private Future<?> locationFuture;
+    private Runnable sensingTask = () -> {
+        //if accelerometer crossed threshold / we detect movement, then do the following:
+        getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
+
+                gpsStorage.add(location);
+            }
+        });
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +88,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
         initLocation();
+        startSensing();
     }
 
     private void initLocation() {
@@ -87,20 +102,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Log.d(getString(R.string.app_name), "Starting location client");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         initMapView(null);
+    }
 
-        locationFuture = executorService.scheduleAtFixedRate(() -> {
-            //if accelerometer crossed threshold then do the following:
-            getLastLocation().addOnSuccessListener(location -> {
-                if (location == null) {
-                    return;
-                }
-                Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
-                Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
+    private void startSensing() {
+        locationFuture = executorService.scheduleAtFixedRate(sensingTask, 0, dutyCycle, TimeUnit.SECONDS);
+    }
 
-                gpsStorage.add(location);
-            });
-        }, 0, 5, TimeUnit.SECONDS);
-        //to stop: locationFuture.cancel(true);
+    private void stopSensing() {
+        if (locationFuture != null) {
+            locationFuture.cancel(true);
+        }
+    }
+
+    private void changeDutyCycle(long dutyCycle) {
+        stopSensing();
+        this.dutyCycle = dutyCycle;
+        startSensing();
     }
 
     @OnClick(R.id.forageBtn)
