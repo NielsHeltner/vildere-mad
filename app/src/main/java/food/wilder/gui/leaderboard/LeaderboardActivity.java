@@ -10,18 +10,18 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import food.wilder.R;
-import food.wilder.common.DaggerStorageComponent;
+import food.wilder.common.AsyncPersistenceCallback;
 import food.wilder.common.IStorage;
-import food.wilder.common.Callback;
-import food.wilder.common.StorageComponent;
-import food.wilder.domain.UserData;
+import food.wilder.common.IUserData;
+import food.wilder.common.dependency_injection.DaggerStorageComponent;
+import food.wilder.common.dependency_injection.StorageComponent;
 
-public class LeaderboardActivity extends AppCompatActivity implements Callback<List<UserData>> {
+public class LeaderboardActivity extends AppCompatActivity implements AsyncPersistenceCallback<List<IUserData>> {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private IStorage<UserData> userStorage;
+    private IStorage<IUserData> userStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class LeaderboardActivity extends AppCompatActivity implements Callback<L
     }
 
     @Override
-    public void callback(List<UserData> list) {
+    public void callback(List<IUserData> list) {
         findViewById(R.id.loadingLayout).setVisibility(View.INVISIBLE);
         mAdapter = new LeaderboardRecyclerViewAdapter(list);
         mRecyclerView.setAdapter(mAdapter);

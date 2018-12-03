@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,9 +17,6 @@ import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionRequest;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,8 +24,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
@@ -37,6 +31,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -44,10 +42,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import food.wilder.R;
-import food.wilder.common.DaggerStorageComponent;
 import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
-import food.wilder.common.StorageComponent;
+import food.wilder.common.dependency_injection.DaggerStorageComponent;
+import food.wilder.common.dependency_injection.StorageComponent;
 import food.wilder.domain.ForageData;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -59,6 +57,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
+    public static final long DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS = 5;
+    public static final long DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS = 15;
 
     @BindView(R.id.map)
     MapView mapView;
@@ -71,6 +71,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Inject
     IStorage<IForageData> forageStorage;
 
+    private long dutyCycle = DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS;
+    private ScheduledExecutorService executorService;
+    private Future<?> locationFuture;
+    private Runnable sensingTask = () -> {
+        //if accelerometer crossed threshold / we detect movement, then do the following:
+        getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
+                Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
+
+                gpsStorage.add(location);
+            }
+        });
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +94,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         StorageComponent component = DaggerStorageComponent.create();
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
+        executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
         initLocation();
+        startSensing();
         initTransition();
     }
 
@@ -122,7 +139,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         task.addOnSuccessListener(
                 result -> {
                     Log.d("TRANSITION", "Success");
-
+                    Toast.makeText(this, "Transition listener added", Toast.LENGTH_SHORT).show();
                 }
         );
 
@@ -144,43 +161,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Log.d(getString(R.string.app_name), "Starting location client");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         initMapView(null);
-
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
-                    Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
-
-                    gpsStorage.add(location);
-                }
-            }
-        };
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
-    @SuppressLint("MissingPermission")
+    private void startSensing() {
+        locationFuture = executorService.scheduleAtFixedRate(sensingTask, 0, dutyCycle, TimeUnit.SECONDS);
+    }
+
+    private void stopSensing() {
+        if (locationFuture != null) {
+            locationFuture.cancel(true);
+        }
+    }
+
+    private void changeDutyCycle(long dutyCycle) {
+        stopSensing();
+        this.dutyCycle = dutyCycle;
+        startSensing();
+    }
+
     @OnClick(R.id.forageBtn)
     public void forage() {
         Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
+        getLastLocation().addOnSuccessListener(location -> {
+            LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
 
-                forageStorage.add(new ForageData(location, 1));
-            }
+            forageStorage.add(new ForageData(location, "Placeholder"));
         });
     }
 
@@ -206,13 +213,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
-            }
+        getLastLocation().addOnSuccessListener(location -> {
+            LatLng lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
         });
+    }
+
+    @SuppressLint("MissingPermission")
+    private Task<Location> getLastLocation() {
+        return fusedLocationClient.getLastLocation();
     }
 
     private void initMapView(Bundle savedInstanceState) {
