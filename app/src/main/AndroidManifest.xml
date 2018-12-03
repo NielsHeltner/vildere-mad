@@ -27,6 +27,8 @@
         <activity android:name=".gui.map.MapActivity"
             android:parentActivityName=".gui.MainActivity"/>
 
+        <receiver android:name=".gui.map.TransitionReceiver" android:exported="true"></receiver>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBZGvUV2TBKDuWs0OL4OveQ2qrLPvOP-Y8"/>

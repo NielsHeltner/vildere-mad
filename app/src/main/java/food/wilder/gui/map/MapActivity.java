@@ -129,7 +129,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         .build());
 
         Intent broadcast = new Intent(this, TransitionReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT, broadcast, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT, broadcast, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         ActivityTransitionRequest request = new ActivityTransitionRequest(transitions);
@@ -139,13 +139,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         task.addOnSuccessListener(
                 result -> {
                     Log.d("TRANSITION", "Success");
-                    Toast.makeText(this, "Transition listener added", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Transition listener added", Toast.LENGTH_SHORT).show();
                 }
         );
 
         task.addOnFailureListener(
                 e -> {
-                    // Handle error
+                    Log.d("TRANSITION", "Error");
                 }
         );
     }
