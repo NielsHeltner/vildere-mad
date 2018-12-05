@@ -20,9 +20,6 @@ public class TransitionReceiver extends BroadcastReceiver {
         if (ActivityTransitionResult.hasResult(intent)) {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             ActivityTransitionEvent event = result.getTransitionEvents().get(result.getTransitionEvents().size()-1);
-                Log.d("TRANSITION", event.toString());
-                String transition = "";
-                String activity = "";
                 Intent activityIntent = new Intent("ACTIVITY_CHANGED");
 
                 if (event.getActivityType() == 3 && event.getTransitionType() == 0) {

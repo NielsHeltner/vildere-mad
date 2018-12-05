@@ -134,7 +134,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void initBatteryReceiver() {
         BatteryReceiver br = new BatteryReceiver(response -> {
-            Log.d("BATTERYTEST", "Callback received");
             if (response.equals(Intent.ACTION_BATTERY_LOW)) {
                 changeDutyCycle(DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS);
             }
