@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
@@ -24,13 +23,16 @@ public class TransitionReceiver extends BroadcastReceiver {
                 Log.d("TRANSITION", event.toString());
                 String transition = "";
                 String activity = "";
+                Intent activityIntent = new Intent("ACTIVITY_CHANGED");
 
-                if (event.getTransitionType() == 0) transition = "Enter";
-                if (event.getTransitionType() == 1) transition = "Exit";
-                if (event.getActivityType() == 3) activity = "Still";
-                if (event.getActivityType() == 7) activity = "Walking";
-
-                Toast.makeText(context, transition + " " + activity, Toast.LENGTH_LONG).show();
+                if (event.getActivityType() == 3 && event.getTransitionType() == 0) {
+                    activityIntent.putExtra("activity", "still");
+                    context.sendBroadcast(activityIntent);
+                }
+                if (event.getActivityType() == 7 && event.getTransitionType() == 0) {
+                    activityIntent.putExtra("activity", "walking");
+                    context.sendBroadcast(activityIntent);
+                }
         }
     }
 }

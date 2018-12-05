@@ -3,7 +3,10 @@ package food.wilder.gui.map;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -96,10 +99,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         forageStorage = component.provideForageStorage();
         executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
+        registerReceiver(activityReceiver, new IntentFilter("ACTIVITY_CHANGED"));
+
         initLocation();
         startSensing();
         initTransition();
     }
+
+    BroadcastReceiver activityReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String activity = intent.getStringExtra("activity");
+            if (activity.equals("still")) {
+                stopSensing();
+            }
+            if (activity.equals("walking")) {
+                startSensing();
+            }
+        }
+    };
 
     private void initTransition() {
         List<ActivityTransition> transitions = new ArrayList<>();
@@ -139,7 +157,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         task.addOnSuccessListener(
                 result -> {
                     Log.d("TRANSITION", "Success");
-                    //Toast.makeText(this, "Transition listener added", Toast.LENGTH_SHORT).show();
                 }
         );
 
@@ -233,6 +250,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String getTimeFormatted(long timeMs) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
         return simpleDateFormat.format(new Date(timeMs));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(activityReceiver);
     }
 
 }
