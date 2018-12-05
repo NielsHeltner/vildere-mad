@@ -2,8 +2,8 @@ package food.wilder.gui.map;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -11,7 +11,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import food.wilder.R;
-import food.wilder.domain.ForageData;
 
 public class ForageActivity extends AppCompatActivity {
 

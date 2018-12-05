@@ -1,4 +1,4 @@
-package food.wilder.common.dependency_injection;
+package food.wilder.common;
 
 public interface AsyncCallback {
     void callback(String response);
