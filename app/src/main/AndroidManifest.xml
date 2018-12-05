@@ -30,7 +30,7 @@
             android:name=".gui.map.MapActivity"
             android:parentActivityName=".gui.MainActivity" />
 
-        <receiver android:name=".gui.map.TransitionReceiver" android:exported="true"></receiver>
+        <receiver android:name=".domain.receivers.TransitionReceiver" android:exported="true"></receiver>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -49,9 +49,12 @@ import food.wilder.R;
 import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
 import food.wilder.common.ITripData;
+import food.wilder.common.dependency_injection.AsyncCallback;
 import food.wilder.common.dependency_injection.DaggerStorageComponent;
 import food.wilder.common.dependency_injection.StorageComponent;
 import food.wilder.domain.ForageData;
+import food.wilder.domain.receivers.BatteryReceiver;
+import food.wilder.domain.receivers.TransitionReceiver;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -113,6 +116,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         initLocation();
         startSensing();
         initTransition();
+        initBatteryReceiver();
     }
 
     BroadcastReceiver activityReceiver = new BroadcastReceiver() {
@@ -127,6 +131,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
     };
+
+    private void initBatteryReceiver() {
+        BatteryReceiver br = new BatteryReceiver(response -> {
+            Log.d("BATTERYTEST", "Callback received");
+            if (response.equals(Intent.ACTION_BATTERY_LOW)) {
+                changeDutyCycle(DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS);
+            }
+            if (response.equals(Intent.ACTION_BATTERY_OKAY)) {
+                changeDutyCycle(DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS);
+            }
+        });
+        IntentFilter it = new IntentFilter();
+        it.addAction(Intent.ACTION_BATTERY_LOW);
+        it.addAction(Intent.ACTION_BATTERY_OKAY);
+        registerReceiver(br, it);
+    }
 
     private void initTransition() {
         List<ActivityTransition> transitions = new ArrayList<>();
