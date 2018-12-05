@@ -75,6 +75,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private FusedLocationProviderClient fusedLocationClient;
     private static String tripId;
+    private PendingIntent pendingIntent;
 
     @Inject
     IStorage<Location> gpsStorage;
@@ -174,7 +175,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         .build());
 
         Intent broadcast = new Intent(this, TransitionReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT, broadcast, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(this, PENDING_INTENT, broadcast, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         ActivityTransitionRequest request = new ActivityTransitionRequest(transitions);
@@ -296,6 +297,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(activityReceiver);
+        Task<Void> task = ActivityRecognition.getClient(this).removeActivityTransitionUpdates(pendingIntent);
+        task.addOnSuccessListener(listener -> pendingIntent.cancel());
     }
 
     @Override
