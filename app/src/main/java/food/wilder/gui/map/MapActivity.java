@@ -2,6 +2,7 @@ package food.wilder.gui.map;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,6 +48,7 @@ import butterknife.OnClick;
 import food.wilder.R;
 import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
+import food.wilder.common.ITripData;
 import food.wilder.common.dependency_injection.DaggerStorageComponent;
 import food.wilder.common.dependency_injection.StorageComponent;
 import food.wilder.domain.ForageData;
@@ -54,6 +56,7 @@ import food.wilder.domain.ForageData;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int INIT_PERMISSION_REQUEST_CODE = 6124;
+    public static final int FORAGE_REQUEST_CODE = 100;
     public static final int LAST_LCOATION_PERMISSION_REQUEST_CODE = 6125;
     public static final int PENDING_INTENT = 123;
     public static final String[] PERMISSION_REQUESTS = new String[]{
@@ -66,13 +69,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @BindView(R.id.map)
     MapView mapView;
     private GoogleMap map;
+    private Location lastLocation;
 
     private FusedLocationProviderClient fusedLocationClient;
+    private static String tripId;
 
     @Inject
     IStorage<Location> gpsStorage;
     @Inject
     IStorage<IForageData> forageStorage;
+    IStorage<ITripData> tripStorage;
 
     private long dutyCycle = DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS;
     private ScheduledExecutorService executorService;
@@ -98,6 +104,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         gpsStorage = component.provideGpsStorage();
         forageStorage = component.provideForageStorage();
         executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+        tripStorage = component.provideTripStorage();
+
+        tripId = null;
 
         registerReceiver(activityReceiver, new IntentFilter("ACTIVITY_CHANGED"));
 
@@ -198,14 +207,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @OnClick(R.id.forageBtn)
     public void forage() {
+        Intent intent = new Intent(this, ForageActivity.class);
+
+        if(tripId == null) {
+            tripStorage.upload(this, "Niclas", callback -> {
+                Log.d("FUCKING", "callback");
+                tripId = (String) callback;
+                gpsStorage.upload(this, tripId);
+
+                Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            gpsStorage.upload(this, tripId);
+            startActivityForResult(intent, FORAGE_REQUEST_CODE);
+        }
+
+    }
+
+    @OnClick(R.id.endTrip)
+    public void endTrip() {
+        tripId = null;
+        finish();
         Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
-
-        getLastLocation().addOnSuccessListener(location -> {
-            LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
-
-            forageStorage.add(new ForageData(location, "Placeholder"));
-        });
     }
 
     /**
@@ -256,6 +279,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(activityReceiver);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == FORAGE_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                String plantName = data.getStringExtra("result");
+                forageStorage.add(new ForageData(lastLocation, plantName));
+                forageStorage.upload(this, tripId);
+
+                getLastLocation().addOnSuccessListener(location -> {
+                    LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
+                });
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 
 }
