@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import food.wilder.common.dependency_injection.AsyncCallback;
+import food.wilder.common.AsyncCallback;
 
 public class BatteryReceiver extends BroadcastReceiver {
 
