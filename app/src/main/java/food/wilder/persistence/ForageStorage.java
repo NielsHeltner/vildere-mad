@@ -39,9 +39,6 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
 
     @Override
     public void upload(Context context, String tripId) {
-        // Upload gps points to database
-        //moveDataToTempAndClear();
-
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.add_forage_end_point);
 
@@ -53,7 +50,6 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
             params.put("lon", data.get(0).getLocation().getLongitude());
             params.put("lat", data.get(0).getLocation().getLatitude());
             params.put("username", "Niclas");
-            //params.put("coordinates", createJSONOfGPSPoints());
         } catch (JSONException e) {
             e.printStackTrace();
         }

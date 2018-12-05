@@ -29,7 +29,7 @@ public class ForageActivity extends AppCompatActivity {
     public void createForageResult() {
         Log.d("FUCKING", "Submit called");
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", forageName.getText().toString());
+        returnIntent.putExtra("plantName", forageName.getText().toString());
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
 

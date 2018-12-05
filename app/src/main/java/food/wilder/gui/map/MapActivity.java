@@ -49,7 +49,6 @@ import food.wilder.R;
 import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
 import food.wilder.common.ITripData;
-import food.wilder.common.dependency_injection.AsyncCallback;
 import food.wilder.common.dependency_injection.DaggerStorageComponent;
 import food.wilder.common.dependency_injection.StorageComponent;
 import food.wilder.domain.ForageData;
@@ -230,11 +229,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(tripId == null) {
             tripStorage.upload(this, "Niclas", callback -> {
-                Log.d("FUCKING", "callback");
                 tripId = (String) callback;
                 gpsStorage.upload(this, tripId);
 
                 Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
+                startActivityForResult(intent, FORAGE_REQUEST_CODE);
             });
         } else {
             gpsStorage.upload(this, tripId);
@@ -247,7 +246,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void endTrip() {
         tripId = null;
         finish();
-        Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -305,7 +303,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (requestCode == FORAGE_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK){
-                String plantName = data.getStringExtra("result");
+                String plantName = data.getStringExtra("plantName");
                 forageStorage.add(new ForageData(lastLocation, plantName));
                 forageStorage.upload(this, tripId);
 
