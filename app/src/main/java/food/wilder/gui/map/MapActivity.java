@@ -92,7 +92,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (location != null) {
                 Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
                 Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
-
+                lastLocation = location;
                 gpsStorage.add(location);
             }
         });
