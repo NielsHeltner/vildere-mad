@@ -89,7 +89,7 @@ public class TripStorage extends AbstractBufferedStorage<ITripData> {
             try {
                 JSONObject jsonData = jsonDataArray.getJSONObject(i);
 
-                tripsList.add(new TripData(jsonData.getString("id_trip"), jsonData.getInt("timestamp")));
+                tripsList.add(new TripData(jsonData.getString("id"), jsonData.getInt("timestamp")));
 
             } catch (JSONException e) {
                 e.printStackTrace();
