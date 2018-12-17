@@ -39,11 +39,6 @@ public class UserStorage extends AbstractBufferedStorage<IUserData> {
     }
 
     @Override
-    public void upload() {
-
-    }
-
-    @Override
     public void get(Context context, String query, AsyncPersistenceCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.get_users_end_point);
@@ -76,5 +71,4 @@ public class UserStorage extends AbstractBufferedStorage<IUserData> {
         usersList.sort(Comparator.comparingInt(IUserData::getLevel).reversed());
         return usersList;
     }
-
 }
