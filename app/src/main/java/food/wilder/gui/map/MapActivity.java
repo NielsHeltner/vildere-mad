@@ -88,11 +88,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Runnable sensingTask = () -> {
         getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
-                Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
-                Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
                 gpsStorage.add(location);
             }
         });
+    };
+    private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String activity = intent.getStringExtra("activity");
+            if (activity.equals("still")) {
+                stopSensing();
+            }
+            if (activity.equals("walking")) {
+                startSensing();
+            }
+        }
     };
 
     @Override
@@ -116,18 +126,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         initBatteryReceiver();
     }
 
-    BroadcastReceiver activityReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String activity = intent.getStringExtra("activity");
-            if (activity.equals("still")) {
-                stopSensing();
-            }
-            if (activity.equals("walking")) {
-                startSensing();
-            }
-        }
-    };
+
 
     private void initBatteryReceiver() {
         BatteryReceiver br = new BatteryReceiver(response -> {
