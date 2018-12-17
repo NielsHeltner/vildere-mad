@@ -18,4 +18,9 @@
     <string name="loading">Loading...</string>
     <string name="name">Name</string>
     <string name="leaderboard">Leaderboard</string>
+
+    <string name="activity_changed">activity_changed</string>
+    <string name="activity_value">activity_value</string>
+    <string name="activity_still">activity_still</string>
+    <string name="activity_walking">activity_walking</string>
 </resources>

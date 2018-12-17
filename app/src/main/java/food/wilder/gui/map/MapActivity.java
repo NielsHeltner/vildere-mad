@@ -95,11 +95,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String activity = intent.getStringExtra("activity");
-            if (activity.equals("still")) {
+            String activity = intent.getStringExtra(getString(R.string.activity_value));
+            if (activity.equals(getString(R.string.activity_still))) {
                 stopSensing();
             }
-            if (activity.equals("walking")) {
+            else if (activity.equals(getString(R.string.activity_walking))) {
                 startSensing();
             }
         }
@@ -118,7 +118,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         tripId = null;
 
-        registerReceiver(activityReceiver, new IntentFilter("ACTIVITY_CHANGED"));
+        registerReceiver(activityReceiver, new IntentFilter(getString(R.string.activity_changed)));
 
         initLocation();
         startSensing();
