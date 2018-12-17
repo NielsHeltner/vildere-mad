@@ -24,11 +24,6 @@ import food.wilder.common.IStorage;
 import food.wilder.common.dependency_injection.DaggerStorageComponent;
 import food.wilder.common.dependency_injection.StorageComponent;
 
-
-/**
- * An activity that displays a Google map with polylines to represent paths or routes,
- * and polygons to represent areas.
- */
 public class RouteActivity extends AppCompatActivity
         implements
         OnMapReadyCallback,
@@ -46,7 +41,6 @@ public class RouteActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_route);
 
         intent = getIntent();
@@ -55,7 +49,6 @@ public class RouteActivity extends AppCompatActivity
         gpsStorage = component.provideGpsStorage();
 
         mapView = findViewById(R.id.routeMap);
-        // Get the SupportMapFragment and request notification when the map is ready to be used.
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
@@ -63,7 +56,6 @@ public class RouteActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         PolylineOptions options = new PolylineOptions()
                 .clickable(true);
         String query = "?trip_id=" + intent.getStringExtra("trip_id");
@@ -77,17 +69,9 @@ public class RouteActivity extends AppCompatActivity
 
         });
 
-        // Position the map's camera near Alice Springs in the center of Australia,
-        // and set the zoom factor so most of Australia shows on the screen.
-
-        // Set listeners for click events.
         googleMap.setOnPolylineClickListener(this);
     }
 
-    /**
-     * Styles the polyline, based on type.
-     * @param polyline The polyline object that needs styling.
-     */
     private void stylePolyline(Polyline polyline) {
         polyline.setEndCap(new RoundCap());
         polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
@@ -95,13 +79,8 @@ public class RouteActivity extends AppCompatActivity
         polyline.setJointType(JointType.ROUND);
     }
 
-    /**
-     * Listens for clicks on a polyline.
-     * @param polyline The polyline object that the user has clicked.
-     */
     @Override
     public void onPolylineClick(Polyline polyline) {
-
         Toast.makeText(this, "Route type " + polyline.getTag().toString(),
                 Toast.LENGTH_SHORT).show();
     }

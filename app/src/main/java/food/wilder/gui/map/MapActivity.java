@@ -71,7 +71,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @BindView(R.id.map)
     MapView mapView;
     private GoogleMap map;
-    private Location lastLocation;
 
     private FusedLocationProviderClient fusedLocationClient;
     private static String tripId;
@@ -87,12 +86,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ScheduledExecutorService executorService;
     private Future<?> locationFuture;
     private Runnable sensingTask = () -> {
-        //if accelerometer crossed threshold / we detect movement, then do the following:
         getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
                 Log.d(getString(R.string.app_name), String.valueOf(location.getLatitude()));
                 Log.d(getString(R.string.app_name), String.valueOf(location.getLongitude()));
-                lastLocation = location;
                 gpsStorage.add(location);
             }
         });
@@ -228,7 +225,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void forage() {
         Intent intent = new Intent(this, ForageActivity.class);
 
-        if(tripId == null) {
+        if (tripId == null) {
             tripStorage.upload(this, "Niclas", callback -> {
                 tripId = (String) callback;
                 gpsStorage.upload(this, tripId);
@@ -303,20 +300,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode == FORAGE_REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                String plantName = data.getStringExtra("plantName");
-                forageStorage.add(new ForageData(lastLocation, plantName));
-                forageStorage.upload(this, tripId);
-
+            if (resultCode == Activity.RESULT_OK) {
                 getLastLocation().addOnSuccessListener(location -> {
+                    String plantName = data.getStringExtra("plantName");
+                    forageStorage.add(new ForageData(location, plantName));
+                    forageStorage.upload(this, tripId);
+
                     LatLng forageLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     map.addMarker(new MarkerOptions().position(forageLocation).title(getTimeFormatted(location.getTime())));
                 });
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
             }
         }
     }
