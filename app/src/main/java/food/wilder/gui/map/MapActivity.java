@@ -104,6 +104,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
+    private BatteryReceiver br = new BatteryReceiver(response -> {
+        if (response.equals(Intent.ACTION_BATTERY_LOW)) {
+            changeDutyCycle(DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS);
+        }
+        if (response.equals(Intent.ACTION_BATTERY_OKAY)) {
+            changeDutyCycle(DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS);
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
