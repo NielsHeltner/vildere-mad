@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
@@ -51,9 +50,9 @@ import food.wilder.common.IStorage;
 import food.wilder.common.ITripData;
 import food.wilder.common.dependency_injection.DaggerStorageComponent;
 import food.wilder.common.dependency_injection.StorageComponent;
-import food.wilder.domain.ForageData;
-import food.wilder.domain.receivers.BatteryReceiver;
-import food.wilder.domain.receivers.TransitionReceiver;
+import food.wilder.gui.map.receivers.BatteryReceiver;
+import food.wilder.gui.map.receivers.TransitionReceiver;
+import food.wilder.persistence.model.ForageData;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -129,14 +128,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
     private void initBatteryReceiver() {
-        BatteryReceiver br = new BatteryReceiver(response -> {
-            if (response.equals(Intent.ACTION_BATTERY_LOW)) {
-                changeDutyCycle(DUTY_CYCLE_INTERVAL_LOW_BATTERY_SECONDS);
-            }
-            if (response.equals(Intent.ACTION_BATTERY_OKAY)) {
-                changeDutyCycle(DUTY_CYCLE_INTERVAL_DEFAULT_SECONDS);
-            }
-        });
+
         IntentFilter it = new IntentFilter();
         it.addAction(Intent.ACTION_BATTERY_LOW);
         it.addAction(Intent.ACTION_BATTERY_OKAY);
@@ -229,7 +221,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 tripId = (String) callback;
                 gpsStorage.upload(this, tripId);
 
-                Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
                 startActivityForResult(intent, FORAGE_REQUEST_CODE);
             });
         } else {
@@ -242,6 +234,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @OnClick(R.id.endTrip)
     public void endTrip() {
         tripId = null;
+        stopSensing();
         finish();
     }
 
@@ -293,6 +286,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(activityReceiver);
+        unregisterReceiver(br);
         Task<Void> task = ActivityRecognition.getClient(this).removeActivityTransitionUpdates(pendingIntent);
         task.addOnSuccessListener(listener -> pendingIntent.cancel());
     }

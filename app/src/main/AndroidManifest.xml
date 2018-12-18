@@ -33,9 +33,9 @@
             android:parentActivityName=".gui.profile.ProfileActivity" />
 
         <receiver
-            android:name=".domain.receivers.TransitionReceiver"
+            android:name=".gui.map.receivers.TransitionReceiver"
             android:exported="true" />
-        <receiver android:name=".domain.receivers.BatteryReceiver">
+        <receiver android:name=".gui.map.receivers.BatteryReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_LOW" />
                 <action android:name="android.intent.action.BATTERY_OKAY" />

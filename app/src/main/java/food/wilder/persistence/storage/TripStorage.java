@@ -1,4 +1,4 @@
-package food.wilder.persistence;
+package food.wilder.persistence.storage;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,7 +23,7 @@ import food.wilder.R;
 import food.wilder.common.AsyncPersistenceCallback;
 import food.wilder.common.IStorage;
 import food.wilder.common.ITripData;
-import food.wilder.domain.TripData;
+import food.wilder.persistence.model.TripData;
 
 public class TripStorage extends AbstractBufferedStorage<ITripData> {
 
@@ -44,9 +44,12 @@ public class TripStorage extends AbstractBufferedStorage<ITripData> {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = context.getResources().getString(R.string.add_trip_end_point);
 
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
-        params.put("timestamp", "10");
+        params.put("timestamp", ts);
 
         JsonObjectRequest jsonobj = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
                 response -> {

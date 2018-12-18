@@ -1,4 +1,4 @@
-package food.wilder.persistence;
+package food.wilder.persistence.storage;
 
 import android.content.Context;
 import android.location.Location;

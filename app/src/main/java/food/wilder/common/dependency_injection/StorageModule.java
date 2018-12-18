@@ -10,10 +10,10 @@ import food.wilder.common.IForageData;
 import food.wilder.common.IStorage;
 import food.wilder.common.ITripData;
 import food.wilder.common.IUserData;
-import food.wilder.persistence.ForageStorage;
-import food.wilder.persistence.GpsStorage;
-import food.wilder.persistence.TripStorage;
-import food.wilder.persistence.UserStorage;
+import food.wilder.persistence.storage.ForageStorage;
+import food.wilder.persistence.storage.GpsStorage;
+import food.wilder.persistence.storage.TripStorage;
+import food.wilder.persistence.storage.UserStorage;
 
 @Module
 public class StorageModule {

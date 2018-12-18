@@ -1,4 +1,4 @@
-package food.wilder.persistence;
+package food.wilder.persistence.storage;
 
 
 import android.content.Context;
@@ -21,7 +21,7 @@ import food.wilder.R;
 import food.wilder.common.IStorage;
 import food.wilder.common.AsyncPersistenceCallback;
 import food.wilder.common.IUserData;
-import food.wilder.domain.UserData;
+import food.wilder.persistence.model.UserData;
 
 public class UserStorage extends AbstractBufferedStorage<IUserData> {
 

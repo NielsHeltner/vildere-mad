@@ -1,4 +1,4 @@
-package food.wilder.domain;
+package food.wilder.persistence.model;
 
 import food.wilder.common.IUserData;
 

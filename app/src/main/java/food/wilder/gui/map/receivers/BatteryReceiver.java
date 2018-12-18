@@ -1,4 +1,4 @@
-package food.wilder.domain.receivers;
+package food.wilder.gui.map.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
