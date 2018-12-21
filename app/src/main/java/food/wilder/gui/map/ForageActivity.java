@@ -26,7 +26,7 @@ public class ForageActivity extends AppCompatActivity {
 
     @OnClick(R.id.forageSubmitButton)
     public void createForageResult() {
-        Log.d("FUCKING", "Submit called");
+        Log.d("FORAGE ACTIVITY CREATE FORAGE RESULT", "Submit called");
         Intent returnIntent = new Intent();
         returnIntent.putExtra("plantName", forageName.getText().toString());
         setResult(Activity.RESULT_OK,returnIntent);

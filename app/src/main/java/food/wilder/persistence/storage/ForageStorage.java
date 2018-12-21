@@ -51,10 +51,10 @@ public class ForageStorage extends AbstractBufferedStorage<IForageData> {
 
         JsonObjectRequest jsonobj = new JsonObjectRequest(Request.Method.POST, url, params,
                 response -> {
-                    Log.d("FUCKING FORAGE", response.toString());
+                    Log.d("FORAGE UPLOAD", response.toString());
                 },
                 error -> {
-                    Log.d("FUCKING", error.getMessage());
+                    Log.d("FORAGE UPLOAD ERROR", error.getMessage());
                 }
         );
         queue.add(jsonobj);

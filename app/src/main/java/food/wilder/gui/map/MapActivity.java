@@ -58,7 +58,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public static final int INIT_PERMISSION_REQUEST_CODE = 6124;
     public static final int FORAGE_REQUEST_CODE = 100;
-    public static final int LAST_LCOATION_PERMISSION_REQUEST_CODE = 6125;
     public static final int PENDING_INTENT = 123;
     public static final String[] PERMISSION_REQUESTS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -230,7 +229,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 tripId = (String) callback;
                 gpsStorage.upload(this, tripId);
 
-                //Toast.makeText(getApplicationContext(), "Trip id: " + tripId, Toast.LENGTH_SHORT).show();
                 startActivityForResult(intent, FORAGE_REQUEST_CODE);
             });
         } else {

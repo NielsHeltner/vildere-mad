@@ -54,14 +54,14 @@ public class TripStorage extends AbstractBufferedStorage<ITripData> {
         JsonObjectRequest jsonobj = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
                 response -> {
                     try {
-                        Log.d("FUCKING", response.getString("id"));
+                        Log.d("TRIP STORAGE UPLOAD", response.getString("id"));
                         callback.callback(response.getString("id"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 },
                 error -> {
-                    Log.d("FUCKING", error.getMessage());
+                    Log.d("TRIP STORAGE UPLOAD ERROR", error.getMessage());
                 }
         );
         queue.add(jsonobj);

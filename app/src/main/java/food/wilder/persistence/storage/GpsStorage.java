@@ -39,7 +39,6 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
 
     @Override
     public void upload(Context context, String id) {
-        // Upload gps points to database
         moveDataToTempAndClear();
 
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -55,10 +54,10 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
 
         JsonObjectRequest jsonobj = new JsonObjectRequest(Request.Method.POST, url, params,
                 response -> {
-                    Log.d("FUCKING GPS", response.toString());
+                    Log.d("GPS STORAGE UPLOAD", response.toString());
                 },
                 error -> {
-                    Log.d("FUCKING", error.getMessage());
+                    Log.d("GPS STORAGE UPLOAD ERROR", error.getMessage());
                 }
         );
         queue.add(jsonobj);
@@ -91,8 +90,6 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
                 location.setLatitude(jsonData.getDouble("lat"));
                 location.setLongitude(jsonData.getDouble("lon"));
                 gpsData.add(location);
-                //gpsData.add(new UserData(jsonData.getString("username"), jsonData.getInt("level")));
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -120,7 +117,7 @@ public class GpsStorage extends AbstractBufferedStorage<Location> {
             jsonArray.put(obj);
 
         }
-        Log.d("FUCKING CREATE POINTS", jsonArray.length()+"");
+        Log.d("GPS STORAGE CREATE POINTS", jsonArray.length()+"");
         return jsonArray;
     }
 
